@@ -1,0 +1,11 @@
+@charset "UTF-8";
+
+#infotable{
+	width: 700px;
+	height: 500px;
+}
+
+#infotable >tbody > tr > td{
+	margin: 10px;
+	padding: 10px;	
+}

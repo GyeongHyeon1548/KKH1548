@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.ssafy.happyhouse.model.mapper.BoardQnaMapper">
+
+	<insert id="writeQna" parameterType="boardQnaDto">
+		insert into qna_answer (targetno, userid, subject, content, hit, regtime)
+		values (#{targetno}, #{userid}, #{subject}, #{content}, 0, now())
+	</insert>
+	
+	<update id="checkQna" parameterType="int">
+		update qna_board
+		set isanswered = isanswered +1
+		where articleno = #{targetno}
+	</update>
+	
+	<select id="listQna" parameterType="int" resultType="boardQnaDto">
+		select articleno, userid, subject, content,
+				case when date_format(regtime, '%Y%m%d') = date_format(now(), '%Y%m%d')
+				then date_format(regtime, '%H:%i:%s')
+				else date_format(regtime, '%y.%m.%d')
+				end regtime
+		from qna_answer
+		where targetno=#{targetno}
+		order by articleno desc
+	</select>
+	
+	<update id="modifyQna" parameterType="boardQnaDto">
+		update qna_answer
+		set subject = #{subject}, content = #{content}
+		where articleno = #{articleno}
+	</update>
+	
+	
+	<delete id="deleteQna" parameterType="int">
+		delete from qna_answer
+		where articleno = #{articleno}
+	</delete>
+	
+	<delete id="deleteAllQna" parameterType="int">
+		delete from qna_answer
+		where targetno = #{targetno}
+	</delete>
+	
+	<update id="uncheckQna" parameterType="map">
+		update qna_board
+		set isanswered = isanswered-1
+		where articleno = (select targetno from qna_answer where articleno = #{articleno})
+	</update>
+	
+
+</mapper>
+

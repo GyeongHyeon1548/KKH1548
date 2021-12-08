@@ -1,0 +1,89 @@
+
+USE `happyhouse` ;
+
+-- -----------------------------------------------------
+-- Table `happyhouse`.`ssafy_member`
+-- -----------------------------------------------------
+ -----------------------------------------------------
+-- Table `happyhouse`.`board`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `happyhouse`.`qna_board` (
+  `articleno` INT NOT NULL AUTO_INCREMENT,
+  `userid` VARCHAR(16) NULL DEFAULT NULL,
+  `subject` VARCHAR(100) NULL DEFAULT NULL,
+  `content` VARCHAR(2000) NULL DEFAULT NULL,
+  `hit` INT NULL DEFAULT 0,
+  `regtime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `isanswered` boolean default false,
+  PRIMARY KEY (`articleno`),
+  INDEX `board_to_member_fk` (`userid` ASC) VISIBLE,
+  CONSTRAINT `board_to_member_fk`
+    FOREIGN KEY (`userid`)
+    REFERENCES `happyhouse`.`member` (`userid`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `happyhouse`.`qna_answer` (
+  `articleno` INT NOT NULL AUTO_INCREMENT,
+  `targetno` INT NOT NULL,
+  `userid` VARCHAR(16) NULL DEFAULT NULL,
+  `subject` VARCHAR(100) NULL DEFAULT NULL,
+  `content` VARCHAR(2000) NULL DEFAULT NULL,
+  `hit` INT NULL DEFAULT 0,
+  `regtime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`articleno`,`targetno`),
+  INDEX `answer_to_member_fk` (`userid` ASC) VISIBLE,
+  CONSTRAINT `qna_to_member_fk`
+    FOREIGN KEY (`userid`)
+    REFERENCES `happyhouse`.`member` (`userid`),
+    CONSTRAINT `qna_to_board_fk`
+    FOREIGN KEY (`targetno`)
+    REFERENCES `happyhouse`.`qna_board` (`articleno`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `happyhouse`.`memo`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `happyhouse`.`memo` ;
+
+CREATE TABLE IF NOT EXISTS `happyhouse`.`memo` (
+  `memono` INT NOT NULL AUTO_INCREMENT,
+  `userid` VARCHAR(16) NULL DEFAULT NULL,
+  `comment` VARCHAR(500) NULL DEFAULT NULL,
+  `memotime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `articleno` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`memono`),
+  INDEX `memo_to_board_fk` (`articleno` ASC) VISIBLE,
+  INDEX `memo_to_member_fk_idx` (`userid` ASC) VISIBLE,
+  CONSTRAINT `memo_to_board_fk`
+    FOREIGN KEY (`articleno`)
+    REFERENCES `happyhouse`.`qna_board` (`articleno`),
+  CONSTRAINT `memo_to_member_fk`
+    FOREIGN KEY (`userid`)
+    REFERENCES `happyhouse`.`member` (`userid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 23
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+insert into qna_board(userid, subject, content) 
+values('ssafy', '그래픽 카드 가격 문의', '얼마에요?'), 
+      ('ssafy', '그래픽 드라이버 문의', '어떻게 깔아요?'),
+      ('admin', 'CPU 재고', '몇개에요?'),
+      ('ssafy', '파워 서플라이 수리 가능한가요?', '가능하면 얼마나 걸리나요?');
+
+commit;

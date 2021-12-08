@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.happyhouse.model.mapper.MemberMapper">
+
+	<select id="idCheck" parameterType="string" resultType="int">
+		select count(userid)
+		from ssafy_member
+		where userid = #{userid}
+	</select>
+
+	<select id="listMember" resultType="MemberDto">
+		select userid userId, userpwd userPwd, userName, comments, address, phone, grade, iscertify
+		from member
+	</select>
+	
+	<select id="Qcount" parameterType="String" resultType="String">
+		select count(userid)
+		from qna_board
+		where userid=#{userid};
+	</select>
+	
+	<select id="Acount" parameterType="String" resultType="String">
+		select count(userid)
+		from qna_answer
+		where userid=#{userid};
+	</select>
+	
+	
+	<select id="searchMember" parameterType="String" resultType="MemberDto">
+		select userid userId, userpwd userPwd, userName, comments, address, phone, grade
+		from member
+		where userName = #{name}
+	</select>
+	
+	<select id="searchMemberById" parameterType="String" resultType="MemberDto">
+		select userid userId, userpwd userPwd, userName, comments, address, phone, grade
+		from member
+		where userid = #{userid}
+	</select>
+	
+	<select id="userInfo" parameterType="String" resultType="memberDto">
+		select userid userId, userpwd userPwd, userName, comments, address, phone, grade, iscertify
+		from member
+		where userid = #{userid}
+	</select>
+
+	<insert id="registerMember" parameterType="MemberDto">
+      insert into member (userid, userpwd, username, address, phone, comments, grade)
+      values (#{userId}, #{userPwd}, #{userName}, #{address}, #{phone}, #{comments}, 0)
+   </insert>
+   
+   <insert id="registerMemberSocial" parameterType="map">
+      insert into social_member (id, email, username, userpwd)
+      values (#{id}, #{email}, #{username}, #{userpwd})
+   </insert>
+   
+   	<delete id="deleteMemberSocial" parameterType="String">
+		delete from social_member
+		where id=#{userId}
+	</delete>
+	
+	<insert id="registerInterest" parameterType="MemberInterestDto">
+		insert into member_interests (userid, interest)
+		values (#{userId}, #{interest})
+	</insert>
+	
+	<delete id="deleteInterest" parameterType="MemberInterestDto">
+		delete from member_interests
+		where (userid=#{userId} and interest=#{interest})
+	</delete>
+	
+	<select id="listInterest" resultType="MemberInterestDto">
+		select userid userId, interest
+		from member_interests
+		where (userid=#{userId})
+	</select>
+
+	<select id="login" parameterType="map" resultType="MemberDto">
+		select userid, username, userpwd, phone, address, comments, grade
+		from member 
+		where userid = #{userId} and userpwd = #{userPwd}
+	</select>
+	
+	<select id="loginSocial" parameterType="String" resultType="MemberDto">
+		select userid, username, userpwd, phone, address, comments, grade
+		from member 
+		where userid = #{email}
+	</select>
+	
+	
+	
+	<update id="certifyMember" parameterType="MemberDto">
+		update member set iscertify=1
+		where userid = #{userId}
+	</update>
+	
+	<update id="updateMember" parameterType="MemberDto">
+		update member set userpwd=#{userPwd}, username=#{userName}, address=#{address}, phone=#{phone}, comments=#{comments}
+		where userid = #{userId}
+	</update>
+	
+	<delete id="deleteMember" parameterType="String">
+		delete from member
+		where userid=#{userId}
+	</delete>
+	
+</mapper>

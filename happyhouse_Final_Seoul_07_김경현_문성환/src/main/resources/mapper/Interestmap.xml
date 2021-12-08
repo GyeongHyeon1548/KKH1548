@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.happyhouse.model.mapper.InterestMapMapper">
+	<select id="getCafe" parameterType="String" resultType="houseInfoDto">
+		select concat(shopName,' ',branchName) Name, jibunAddress jibun, lat, lng 
+		from cafe
+		where left(dongcode,5)= #{dongCode}
+	</select>	
+	
+	<select id="getFastFood" parameterType="String" resultType="houseInfoDto">
+		select concat(상호명,' ',지점명) Name, 지번주소 jibun, 위도 lat, 경도 lng 
+		from fastfood
+		where left(법정동코드,5)= #{dongCode}
+	</select>	
+	
+	<select id="getSchool" parameterType="String" resultType="houseInfoDto">
+		select distinct school Name, 표준구주소 jibun, lat, lng 
+		from school
+		where left(dongcode,5)= #{dongCode}
+	</select>	
+	
+	<select id="getCorona" parameterType="String" resultType="houseInfoDto">
+		select gigwanName Name, gigwanAddress jibun, lat, lng, weekdayTime etc1, saturdayTime etc2, sundayTime etc3, tel etc4 
+		from corona
+		where left(guguncode,5)= #{dongCode}
+	</select>
+	
+	<select id="getHospital" parameterType="String" resultType="houseInfoDto">
+		select name Name, address jibun
+		from hospital
+		where address like concat((select sidoName from sidocode where left(sidoCode,2)=left(#{dongcode},2)),"%")
+		and gugun = (select gugunName from guguncode where left(gugunCode,5)=#{dongcode});
+	</select>	
+</mapper>
